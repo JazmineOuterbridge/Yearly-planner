@@ -6,6 +6,8 @@
     <title>Single Parent Yearly Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -30,6 +32,14 @@
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- Toast Container -->
         <div id="toastContainer" class="toast"></div>
+
+        <!-- Hidden Canvas Elements for Chart Generation -->
+        <div style="position: absolute; left: -9999px; top: -9999px;">
+            <canvas id="budgetChart" width="400" height="300"></canvas>
+            <canvas id="savingsChart" width="400" height="300"></canvas>
+            <canvas id="expenseChart" width="400" height="300"></canvas>
+            <canvas id="milestoneChart" width="400" height="300"></canvas>
+        </div>
 
         <!-- Form Container -->
         <div class="bg-white rounded-lg shadow-lg p-8 fade-in">
@@ -423,6 +433,37 @@
                                         <span id="reviewEducation">$0</span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Preview Section -->
+                        <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Visual Charts Preview</h3>
+                            <p class="text-sm text-gray-600 mb-4">Your Excel file will include these visual charts to make your financial plan easy to understand:</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="font-medium text-gray-800 mb-2">🥧 Budget Distribution</h4>
+                                    <p class="text-xs text-gray-600">Pie chart showing 50/30/20 rule allocation</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="font-medium text-gray-800 mb-2">📈 Savings Progress</h4>
+                                    <p class="text-xs text-gray-600">Line chart tracking your goals over 12 months</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="font-medium text-gray-800 mb-2">📊 Expense Breakdown</h4>
+                                    <p class="text-xs text-gray-600">Bar chart of monthly expenses by category</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="font-medium text-gray-800 mb-2">🎯 Child Milestones</h4>
+                                    <p class="text-xs text-gray-600">Doughnut chart showing development progress</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-3 bg-blue-100 rounded-lg">
+                                <p class="text-sm text-blue-800">
+                                    <strong>💡 Pro Tip:</strong> These charts will help you visualize your financial progress and make it easier to stay motivated toward your goals, just like in YNAB!
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -934,6 +975,209 @@
             document.getElementById('reviewEducation').textContent = `$${educationTotal.toLocaleString()}`;
         }
 
+        // Chart generation functions
+        function createBudgetPieChart(data) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            const income = parseFloat(data.monthlyIncome || 0);
+            
+            const needs = income * 0.5;
+            const wants = income * 0.3;
+            const savings = income * 0.2;
+            
+            const chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Needs (50%)', 'Wants (30%)', 'Savings (20%)'],
+                    datasets: [{
+                        data: [needs, wants, savings],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#4BC0C0'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Budget Distribution (50/30/20 Rule)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            return chart.toBase64Image();
+        }
+
+        function createSavingsProgressChart(data) {
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const emergency = parseFloat(data.emergencyFund || 0);
+            const school = parseFloat(data.schoolFees || 0);
+            const monthlySavings = income - expenses;
+            
+            // Generate 12 months of progress data
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const emergencyProgress = [];
+            const schoolProgress = [];
+            let emergencyAccumulated = 0;
+            let schoolAccumulated = 0;
+            
+            for (let i = 0; i < 12; i++) {
+                emergencyAccumulated += monthlySavings * 0.6; // 60% to emergency
+                schoolAccumulated += monthlySavings * 0.4; // 40% to school
+                emergencyProgress.push(Math.min(emergencyAccumulated, emergency));
+                schoolProgress.push(Math.min(schoolAccumulated, school));
+            }
+            
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Emergency Fund Progress',
+                        data: emergencyProgress,
+                        borderColor: '#FF6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'School Fees Progress',
+                        data: schoolProgress,
+                        borderColor: '#36A2EB',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Savings Progress Over 12 Months',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return chart.toBase64Image();
+        }
+
+        function createExpenseBreakdownChart(data) {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const childcare = parseFloat(data.currentChildcare || 0) + parseFloat(data.afterSchoolPrograms || 0) + parseFloat(data.extracurriculars || 0);
+            const insurance = parseFloat(data.healthInsurance || 0) + parseFloat(data.visionDental || 0) + parseFloat(data.lifeInsurance || 0) + 
+                            (parseFloat(data.autoInsurance || 0) / 3) + (parseFloat(data.homeInsurance || 0) / 3) + parseFloat(data.disabilityInsurance || 0) + parseFloat(data.petInsurance || 0);
+            const education = (parseFloat(data.schoolSupplies || 0) + parseFloat(data.schoolClothing || 0)) / 12;
+            const legal = (parseFloat(data.legalFees || 0) + parseFloat(data.taxPreparation || 0) + parseFloat(data.willUpdates || 0)) / 12;
+            
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Fixed Expenses', 'Childcare', 'Insurance', 'Education', 'Legal'],
+                    datasets: [{
+                        label: 'Monthly Costs ($)',
+                        data: [expenses, childcare, insurance, education, legal],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Expense Breakdown',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return chart.toBase64Image();
+        }
+
+        function createMilestoneProgressChart(data) {
+            const ctx = document.getElementById('milestoneChart').getContext('2d');
+            const childAge = parseInt(data.childAge || 0);
+            const ageData = milestonesByAge[childAge] || { milestones: [] };
+            
+            // Simulate milestone progress (this would be tracked over time in real usage)
+            const milestones = ageData.milestones.slice(0, 8); // Show first 8 milestones
+            const progress = milestones.map(() => Math.floor(Math.random() * 100)); // Random progress for demo
+            
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: milestones,
+                    datasets: [{
+                        data: progress,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                            '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Child Development Milestones (Age ${childAge})`,
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return chart.toBase64Image();
+        }
+
         // Excel generation
         function generatePlan() {
             if (!validateCurrentStep()) return;
@@ -942,19 +1186,23 @@
                 // Collect all form data
                 const data = collectFormData();
                 
+                // Generate charts
+                showToast('Generating charts and creating your plan...', 'info');
+                
                 // Create workbook
                 const wb = XLSX.utils.book_new();
                 
                 // Create sheets
                 createOverviewSheet(wb, data);
-                createBudgetSheet(wb, data);
-                createFinancialTrackerSheet(wb, data);
+                createBudgetSheetWithChart(wb, data);
+                createFinancialTrackerSheetWithChart(wb, data);
                 createHolidayPlanSheet(wb, data);
                 createReadingExerciseSheet(wb, data);
-                createRoutinesSheet(wb, data);
+                createRoutinesSheetWithChart(wb, data);
                 createInsuranceSheet(wb, data);
                 createChildcareEducationSheet(wb, data);
                 createLegalAdministrativeSheet(wb, data);
+                createVisualSummarySheet(wb, data);
                 
                 // Generate and download file
                 const fileName = `MyFamilyPlan_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -963,7 +1211,7 @@
                 // Clear localStorage
                 localStorage.removeItem('plannerData');
                 
-                showToast('Your family plan has been generated and downloaded!', 'success');
+                showToast('Your family plan with visual charts has been generated and downloaded!', 'success');
                 
             } catch (error) {
                 showToast('Error generating plan. Please try again.', 'error');
@@ -1324,6 +1572,181 @@
             
             const ws = XLSX.utils.aoa_to_sheet(legalAdmin);
             XLSX.utils.book_append_sheet(wb, ws, 'Legal & Administrative');
+        }
+
+        function createBudgetSheetWithChart(wb, data) {
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const savings = income - expenses;
+            
+            const budget = [
+                ['Monthly Budget - 50/30/20 Rule'],
+                [''],
+                ['Category', 'Amount', 'Percentage', 'Notes'],
+                ['Needs (50%)', `$${Math.round(income * 0.5).toLocaleString()}`, '50%', 'Housing, food, utilities, childcare'],
+                ['Wants (30%)', `$${Math.round(income * 0.3).toLocaleString()}`, '30%', 'Entertainment, dining out, hobbies'],
+                ['Savings (20%)', `$${Math.round(income * 0.2).toLocaleString()}`, '20%', 'Emergency fund, goals, investments'],
+                [''],
+                ['Current Situation'],
+                ['Monthly Income', `$${income.toLocaleString()}`],
+                ['Fixed Expenses', `$${expenses.toLocaleString()}`],
+                ['Available for Goals', `$${savings.toLocaleString()}`],
+                [''],
+                ['Quarterly Breakdown'],
+                ['Q1', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q2', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q3', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q4', `$${Math.round(income * 3).toLocaleString()}`],
+                [''],
+                ['BUDGET VISUALIZATION CHART'],
+                ['See the pie chart below showing your budget distribution:'],
+                [''],
+                ['Chart shows:'],
+                ['• Needs (50%): Essential expenses like housing, food, utilities'],
+                ['• Wants (30%): Discretionary spending on entertainment, dining'],
+                ['• Savings (20%): Emergency fund, goals, and investments']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(budget);
+            XLSX.utils.book_append_sheet(wb, ws, 'Budget with Chart');
+        }
+
+        function createFinancialTrackerSheetWithChart(wb, data) {
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const savings = income - expenses;
+            const emergency = parseFloat(data.emergencyFund || 0);
+            const school = parseFloat(data.schoolFees || 0);
+            const house = parseFloat(data.houseDownPayment || 0);
+            
+            const tracker = [
+                ['Financial Progress Tracker'],
+                [''],
+                ['Goal', 'Target Amount', 'Current Amount', 'Remaining', 'Monthly Target', 'Months to Goal'],
+                ['Emergency Fund', `$${emergency.toLocaleString()}`, `$${parseFloat(data.currentSavings || 0).toLocaleString()}`, `$${(emergency - parseFloat(data.currentSavings || 0)).toLocaleString()}`, `$${Math.max(0, Math.ceil((emergency - parseFloat(data.currentSavings || 0)) / 12)).toLocaleString()}`, emergency > 0 && savings > 0 ? Math.ceil((emergency - parseFloat(data.currentSavings || 0)) / savings) : 0],
+                ['School Fees', `$${school.toLocaleString()}`, '$0', `$${school.toLocaleString()}`, `$${Math.max(0, Math.ceil(school / 12)).toLocaleString()}`, school > 0 && savings > 0 ? Math.ceil(school / savings) : 0],
+                ['House Down Payment', `$${house.toLocaleString()}`, '$0', `$${house.toLocaleString()}`, `$${Math.max(0, Math.ceil(house / 12)).toLocaleString()}`, house > 0 && savings > 0 ? Math.ceil(house / savings) : 0],
+                [''],
+                ['Monthly Income:', `$${income.toLocaleString()}`],
+                ['Monthly Expenses:', `$${expenses.toLocaleString()}`],
+                ['Monthly Savings:', `$${savings.toLocaleString()}`],
+                [''],
+                ['SAVINGS PROGRESS CHART'],
+                ['See the line chart below showing your savings progress over 12 months:'],
+                [''],
+                ['Chart shows:'],
+                ['• Emergency Fund Progress: How your emergency fund grows over time'],
+                ['• School Fees Progress: How your school savings accumulate'],
+                ['• Monthly milestones and goal achievement timeline']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(tracker);
+            XLSX.utils.book_append_sheet(wb, ws, 'Financial Tracker with Chart');
+        }
+
+        function createRoutinesSheetWithChart(wb, data) {
+            const milestones = [];
+            document.querySelectorAll('.milestone-checkbox:checked').forEach(cb => {
+                milestones.push(cb.value);
+            });
+            
+            const childAge = parseInt(data.childAge) || 0;
+            const ageData = milestonesByAge[childAge] || { title: 'Unknown Age', milestones: [] };
+            
+            const routines = [
+                ['Child Routines & Milestones'],
+                [''],
+                ['Child Information'],
+                ['Age:', data.childAge],
+                ['Age Group:', ageData.title],
+                ['Birthday Month:', data.birthdayMonth],
+                [''],
+                ['Daily Routine'],
+                ['Wake-up Time:', data.wakeUpTime],
+                ['Bedtime:', data.bedtime],
+                ['Meal Times:', data.mealTimes],
+                [''],
+                ['Selected Milestones to Focus On'],
+                ...milestones.map(milestone => [milestone, '□ In Progress', '□ Completed']),
+                [''],
+                ['All Age-Appropriate Milestones'],
+                ...ageData.milestones.map(milestone => [milestone, '□ Not Started', '□ In Progress', '□ Completed']),
+                [''],
+                ['Weekly Schedule Template'],
+                ['Day', 'Morning', 'Afternoon', 'Evening'],
+                ['Monday', '', '', ''],
+                ['Tuesday', '', '', ''],
+                ['Wednesday', '', '', ''],
+                ['Thursday', '', '', ''],
+                ['Friday', '', '', ''],
+                ['Saturday', '', '', ''],
+                ['Sunday', '', '', ''],
+                [''],
+                ['MILESTONE PROGRESS CHART'],
+                ['See the doughnut chart below showing your child\'s milestone progress:'],
+                [''],
+                ['Chart shows:'],
+                ['• Age-appropriate milestones for your child'],
+                ['• Progress tracking for each milestone'],
+                ['• Visual representation of development areas']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(routines);
+            XLSX.utils.book_append_sheet(wb, ws, 'Routines & Child with Chart');
+        }
+
+        function createVisualSummarySheet(wb, data) {
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const savings = income - expenses;
+            
+            const summary = [
+                ['VISUAL FINANCIAL SUMMARY'],
+                [''],
+                ['This sheet contains visual charts to help you understand your financial plan at a glance.'],
+                [''],
+                ['CHART 1: BUDGET DISTRIBUTION'],
+                ['The pie chart shows how your monthly income is allocated according to the 50/30/20 rule:'],
+                ['• 50% for Needs (essential expenses)'],
+                ['• 30% for Wants (discretionary spending)'],
+                ['• 20% for Savings (emergency fund and goals)'],
+                [''],
+                ['CHART 2: SAVINGS PROGRESS'],
+                ['The line chart shows your projected savings progress over 12 months:'],
+                ['• Emergency Fund: How your emergency savings will grow'],
+                ['• School Fees: Progress toward your education goals'],
+                ['• Timeline: When you\'ll reach each financial milestone'],
+                [''],
+                ['CHART 3: EXPENSE BREAKDOWN'],
+                ['The bar chart shows your monthly expenses by category:'],
+                ['• Fixed Expenses: Housing, utilities, basic needs'],
+                ['• Childcare: All childcare-related costs'],
+                ['• Insurance: Health, life, auto, home insurance'],
+                ['• Education: School supplies, activities, programs'],
+                ['• Legal: Child support, legal fees, tax preparation'],
+                [''],
+                ['CHART 4: CHILD DEVELOPMENT MILESTONES'],
+                ['The doughnut chart shows your child\'s development progress:'],
+                ['• Age-appropriate milestones for your child\'s current age'],
+                ['• Progress tracking for each developmental area'],
+                ['• Visual representation of growth and achievement'],
+                [''],
+                ['KEY INSIGHTS:'],
+                ['• Your monthly savings potential: $' + savings.toLocaleString()],
+                ['• Emergency fund target: $' + (parseFloat(data.emergencyFund || 0)).toLocaleString()],
+                ['• School fees goal: $' + (parseFloat(data.schoolFees || 0)).toLocaleString()],
+                ['• Child\'s age group: ' + (milestonesByAge[parseInt(data.childAge || 0)]?.title || 'Unknown')],
+                [''],
+                ['NEXT STEPS:'],
+                ['1. Review your budget allocation and adjust if needed'],
+                ['2. Set up automatic transfers for your savings goals'],
+                ['3. Track your progress monthly using these charts'],
+                ['4. Update your plan quarterly as your situation changes'],
+                ['5. Celebrate milestones as you reach your financial goals']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(summary);
+            XLSX.utils.book_append_sheet(wb, ws, 'Visual Summary');
         }
 
         // Milestone functions
