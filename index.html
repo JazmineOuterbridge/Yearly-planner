@@ -18,10 +18,10 @@
         <div class="max-w-4xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between mb-2">
                 <h1 class="text-xl font-semibold text-gray-800">Single Parent Yearly Planner</h1>
-                <span class="text-sm text-gray-600" id="stepCounter">Step 1 of 6</span>
+                <span class="text-sm text-gray-600" id="stepCounter">Step 1 of 9</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500" id="progressBar" style="width: 16.67%"></div>
+                <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500" id="progressBar" style="width: 11.11%"></div>
             </div>
         </div>
     </div>
@@ -209,9 +209,145 @@
                     </div>
                 </div>
 
-                <!-- Step 6: Review -->
+                <!-- Step 6: Insurance & Protection -->
                 <div class="step hidden" id="step6">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Review Your Plan</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Insurance & Protection</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Health Insurance Monthly Premium ($)</label>
+                                <input type="number" id="healthInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Health Insurance Deductible ($)</label>
+                                <input type="number" id="healthDeductible" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pediatrician Co-pay ($)</label>
+                                <input type="number" id="pediatricianCopay" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Vision/Dental Monthly ($)</label>
+                                <input type="number" id="visionDental" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Life Insurance Monthly ($)</label>
+                                <input type="number" id="lifeInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Life Insurance Coverage Amount ($)</label>
+                                <input type="number" id="lifeCoverage" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Auto Insurance Quarterly ($)</label>
+                                <input type="number" id="autoInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Home/Renters Insurance Quarterly ($)</label>
+                                <input type="number" id="homeInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Disability Insurance Monthly ($)</label>
+                                <input type="number" id="disabilityInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pet Insurance Monthly ($)</label>
+                                <input type="number" id="petInsurance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Childcare & Education -->
+                <div class="step hidden" id="step7">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Childcare & Education Logistics</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Current Childcare Monthly ($)</label>
+                                <input type="number" id="currentChildcare" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">After-School Programs Monthly ($)</label>
+                                <input type="number" id="afterSchoolPrograms" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Summer Camp Weekly Budget ($)</label>
+                                <input type="number" id="summerCampBudget" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Extracurriculars Monthly ($)</label>
+                                <input type="number" id="extracurriculars" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">School Supplies Annual ($)</label>
+                                <input type="number" id="schoolSupplies" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Uniforms/Clothing Annual ($)</label>
+                                <input type="number" id="schoolClothing" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upcoming Education Deadlines</label>
+                            <textarea id="educationDeadlines" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="e.g., Kindergarten registration: March 15, School supply lists: July 1"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 8: Legal & Administrative -->
+                <div class="step hidden" id="step8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Legal & Administrative</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Child Support Monthly ($)</label>
+                                <input type="number" id="childSupport" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Legal Fees Annual ($)</label>
+                                <input type="number" id="legalFees" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tax Preparation Annual ($)</label>
+                                <input type="number" id="taxPreparation" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Will/Guardianship Updates ($)</label>
+                                <input type="number" id="willUpdates" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Government Benefits Status</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="SNAP" class="benefits-checkbox">
+                                    <span class="text-sm">SNAP</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="WIC" class="benefits-checkbox">
+                                    <span class="text-sm">WIC</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Childcare Subsidy" class="benefits-checkbox">
+                                    <span class="text-sm">Childcare Subsidy</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Medicaid" class="benefits-checkbox">
+                                    <span class="text-sm">Medicaid</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Legal/Administrative Notes</label>
+                            <textarea id="legalNotes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="e.g., Child support modification review: June, Will update needed: December"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 9: Review -->
+                <div class="step hidden" id="step9">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Review Your Complete Plan</h2>
                     <div class="bg-gray-50 rounded-lg p-6 space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -261,6 +397,34 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-3">Insurance & Protection</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Monthly Insurance Total:</span>
+                                        <span id="reviewInsurance">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Life Coverage Amount:</span>
+                                        <span id="reviewLifeCoverage">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-3">Childcare & Education</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Monthly Childcare Total:</span>
+                                        <span id="reviewChildcare">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Annual Education Costs:</span>
+                                        <span id="reviewEducation">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -277,7 +441,7 @@
     <script>
         // Global variables
         let currentStep = 1;
-        const totalSteps = 6;
+        const totalSteps = 9;
         const formData = {};
 
         // Comprehensive child development milestones by age
@@ -726,11 +890,34 @@
             const readingGoal = parseFloat(document.getElementById('readingGoal').value) || 0;
             const exerciseFreq = parseFloat(document.getElementById('exerciseFrequency').value) || 0;
             
+            // Calculate insurance totals
+            const healthInsurance = parseFloat(document.getElementById('healthInsurance').value) || 0;
+            const visionDental = parseFloat(document.getElementById('visionDental').value) || 0;
+            const lifeInsurance = parseFloat(document.getElementById('lifeInsurance').value) || 0;
+            const autoInsurance = (parseFloat(document.getElementById('autoInsurance').value) || 0) / 3; // Quarterly to monthly
+            const homeInsurance = (parseFloat(document.getElementById('homeInsurance').value) || 0) / 3; // Quarterly to monthly
+            const disabilityInsurance = parseFloat(document.getElementById('disabilityInsurance').value) || 0;
+            const petInsurance = parseFloat(document.getElementById('petInsurance').value) || 0;
+            const insuranceTotal = healthInsurance + visionDental + lifeInsurance + autoInsurance + homeInsurance + disabilityInsurance + petInsurance;
+            
+            // Calculate childcare totals
+            const currentChildcare = parseFloat(document.getElementById('currentChildcare').value) || 0;
+            const afterSchoolPrograms = parseFloat(document.getElementById('afterSchoolPrograms').value) || 0;
+            const extracurriculars = parseFloat(document.getElementById('extracurriculars').value) || 0;
+            const childcareTotal = currentChildcare + afterSchoolPrograms + extracurriculars;
+            
+            // Calculate education costs
+            const schoolSupplies = parseFloat(document.getElementById('schoolSupplies').value) || 0;
+            const schoolClothing = parseFloat(document.getElementById('schoolClothing').value) || 0;
+            const summerCampBudget = parseFloat(document.getElementById('summerCampBudget').value) || 0;
+            const educationTotal = schoolSupplies + schoolClothing + (summerCampBudget * 8); // 8 weeks of summer
+            
             const savings = income - expenses;
             const emergencyMonths = emergency > 0 && savings > 0 ? Math.ceil(emergency / savings) : 0;
             const schoolMonths = school > 0 && savings > 0 ? Math.ceil(school / savings) : 0;
             const booksYear = readingGoal * 12;
             const workoutsYear = exerciseFreq * 52;
+            const lifeCoverage = parseFloat(document.getElementById('lifeCoverage').value) || 0;
             
             document.getElementById('reviewIncome').textContent = `$${income.toLocaleString()}`;
             document.getElementById('reviewExpenses').textContent = `$${expenses.toLocaleString()}`;
@@ -741,6 +928,10 @@
             document.getElementById('reviewSchoolMonths').textContent = schoolMonths;
             document.getElementById('reviewBooks').textContent = booksYear;
             document.getElementById('reviewWorkouts').textContent = workoutsYear;
+            document.getElementById('reviewInsurance').textContent = `$${insuranceTotal.toLocaleString()}`;
+            document.getElementById('reviewLifeCoverage').textContent = `$${lifeCoverage.toLocaleString()}`;
+            document.getElementById('reviewChildcare').textContent = `$${childcareTotal.toLocaleString()}`;
+            document.getElementById('reviewEducation').textContent = `$${educationTotal.toLocaleString()}`;
         }
 
         // Excel generation
@@ -761,6 +952,9 @@
                 createHolidayPlanSheet(wb, data);
                 createReadingExerciseSheet(wb, data);
                 createRoutinesSheet(wb, data);
+                createInsuranceSheet(wb, data);
+                createChildcareEducationSheet(wb, data);
+                createLegalAdministrativeSheet(wb, data);
                 
                 // Generate and download file
                 const fileName = `MyFamilyPlan_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -971,6 +1165,165 @@
             
             const ws = XLSX.utils.aoa_to_sheet(routines);
             XLSX.utils.book_append_sheet(wb, ws, 'Routines & Child');
+        }
+
+        function createInsuranceSheet(wb, data) {
+            const healthInsurance = parseFloat(data.healthInsurance || 0);
+            const healthDeductible = parseFloat(data.healthDeductible || 0);
+            const pediatricianCopay = parseFloat(data.pediatricianCopay || 0);
+            const visionDental = parseFloat(data.visionDental || 0);
+            const lifeInsurance = parseFloat(data.lifeInsurance || 0);
+            const lifeCoverage = parseFloat(data.lifeCoverage || 0);
+            const autoInsurance = parseFloat(data.autoInsurance || 0);
+            const homeInsurance = parseFloat(data.homeInsurance || 0);
+            const disabilityInsurance = parseFloat(data.disabilityInsurance || 0);
+            const petInsurance = parseFloat(data.petInsurance || 0);
+            
+            const insurance = [
+                ['Insurance & Protection Plan'],
+                [''],
+                ['Health Insurance'],
+                ['Monthly Premium:', `$${healthInsurance.toLocaleString()}`],
+                ['Annual Premium:', `$${(healthInsurance * 12).toLocaleString()}`],
+                ['Deductible:', `$${healthDeductible.toLocaleString()}`],
+                ['Pediatrician Co-pay:', `$${pediatricianCopay.toLocaleString()}`],
+                ['Vision/Dental Monthly:', `$${visionDental.toLocaleString()}`],
+                [''],
+                ['Life Insurance'],
+                ['Monthly Premium:', `$${lifeInsurance.toLocaleString()}`],
+                ['Coverage Amount:', `$${lifeCoverage.toLocaleString()}`],
+                ['Annual Premium:', `$${(lifeInsurance * 12).toLocaleString()}`],
+                [''],
+                ['Property Insurance'],
+                ['Auto Insurance (Quarterly):', `$${autoInsurance.toLocaleString()}`],
+                ['Auto Insurance (Monthly):', `$${(autoInsurance / 3).toLocaleString()}`],
+                ['Home/Renters Insurance (Quarterly):', `$${homeInsurance.toLocaleString()}`],
+                ['Home/Renters Insurance (Monthly):', `$${(homeInsurance / 3).toLocaleString()}`],
+                [''],
+                ['Additional Coverage'],
+                ['Disability Insurance (Monthly):', `$${disabilityInsurance.toLocaleString()}`],
+                ['Pet Insurance (Monthly):', `$${petInsurance.toLocaleString()}`],
+                [''],
+                ['Total Monthly Insurance Cost:', `$${(healthInsurance + visionDental + lifeInsurance + (autoInsurance/3) + (homeInsurance/3) + disabilityInsurance + petInsurance).toLocaleString()}`],
+                ['Total Annual Insurance Cost:', `$${((healthInsurance + visionDental + lifeInsurance + (autoInsurance/3) + (homeInsurance/3) + disabilityInsurance + petInsurance) * 12).toLocaleString()}`],
+                [''],
+                ['Insurance Review Schedule'],
+                ['Health Insurance Review:', 'Annual (Open Enrollment)'],
+                ['Life Insurance Review:', 'Every 2-3 years'],
+                ['Auto Insurance Review:', 'Every 6 months'],
+                ['Home Insurance Review:', 'Annual'],
+                ['Disability Insurance Review:', 'Annual']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(insurance);
+            XLSX.utils.book_append_sheet(wb, ws, 'Insurance & Protection');
+        }
+
+        function createChildcareEducationSheet(wb, data) {
+            const currentChildcare = parseFloat(data.currentChildcare || 0);
+            const afterSchoolPrograms = parseFloat(data.afterSchoolPrograms || 0);
+            const summerCampBudget = parseFloat(data.summerCampBudget || 0);
+            const extracurriculars = parseFloat(data.extracurriculars || 0);
+            const schoolSupplies = parseFloat(data.schoolSupplies || 0);
+            const schoolClothing = parseFloat(data.schoolClothing || 0);
+            const educationDeadlines = data.educationDeadlines || '';
+            
+            const childcareEducation = [
+                ['Childcare & Education Logistics'],
+                [''],
+                ['Current Childcare Costs'],
+                ['Monthly Childcare:', `$${currentChildcare.toLocaleString()}`],
+                ['After-School Programs:', `$${afterSchoolPrograms.toLocaleString()}`],
+                ['Extracurriculars:', `$${extracurriculars.toLocaleString()}`],
+                ['Total Monthly Childcare:', `$${(currentChildcare + afterSchoolPrograms + extracurriculars).toLocaleString()}`],
+                ['Total Annual Childcare:', `$${((currentChildcare + afterSchoolPrograms + extracurriculars) * 12).toLocaleString()}`],
+                [''],
+                ['Summer Programs'],
+                ['Weekly Camp Budget:', `$${summerCampBudget.toLocaleString()}`],
+                ['8-Week Summer Total:', `$${(summerCampBudget * 8).toLocaleString()}`],
+                [''],
+                ['Education Costs'],
+                ['Annual School Supplies:', `$${schoolSupplies.toLocaleString()}`],
+                ['Annual School Clothing/Uniforms:', `$${schoolClothing.toLocaleString()}`],
+                ['Total Annual Education:', `$${(schoolSupplies + schoolClothing).toLocaleString()}`],
+                [''],
+                ['Upcoming Deadlines'],
+                ['Important Dates:', educationDeadlines],
+                [''],
+                ['Childcare Planning Checklist'],
+                ['□ Research summer programs'],
+                ['□ Register for after-school activities'],
+                ['□ Budget for school supplies'],
+                ['□ Plan for uniform/clothing needs'],
+                ['□ Schedule childcare backup options'],
+                ['□ Review childcare subsidies eligibility'],
+                [''],
+                ['Monthly Budget Breakdown'],
+                ['Childcare:', `$${(currentChildcare + afterSchoolPrograms + extracurriculars).toLocaleString()}`],
+                ['Education (Monthly):', `$${((schoolSupplies + schoolClothing) / 12).toLocaleString()}`],
+                ['Summer (Monthly):', `$${((summerCampBudget * 8) / 12).toLocaleString()}`],
+                ['Total Monthly:', `$${((currentChildcare + afterSchoolPrograms + extracurriculars) + ((schoolSupplies + schoolClothing) / 12) + ((summerCampBudget * 8) / 12)).toLocaleString()}`]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(childcareEducation);
+            XLSX.utils.book_append_sheet(wb, ws, 'Childcare & Education');
+        }
+
+        function createLegalAdministrativeSheet(wb, data) {
+            const childSupport = parseFloat(data.childSupport || 0);
+            const legalFees = parseFloat(data.legalFees || 0);
+            const taxPreparation = parseFloat(data.taxPreparation || 0);
+            const willUpdates = parseFloat(data.willUpdates || 0);
+            const legalNotes = data.legalNotes || '';
+            
+            const benefits = [];
+            document.querySelectorAll('.benefits-checkbox:checked').forEach(cb => {
+                benefits.push(cb.value);
+            });
+            
+            const legalAdmin = [
+                ['Legal & Administrative Planning'],
+                [''],
+                ['Child Support'],
+                ['Monthly Child Support:', `$${childSupport.toLocaleString()}`],
+                ['Annual Child Support:', `$${(childSupport * 12).toLocaleString()}`],
+                [''],
+                ['Legal & Professional Services'],
+                ['Annual Legal Fees:', `$${legalFees.toLocaleString()}`],
+                ['Tax Preparation:', `$${taxPreparation.toLocaleString()}`],
+                ['Will/Guardianship Updates:', `$${willUpdates.toLocaleString()}`],
+                ['Total Annual Legal Costs:', `$${(legalFees + taxPreparation + willUpdates).toLocaleString()}`],
+                [''],
+                ['Government Benefits Status'],
+                ['Current Benefits:', benefits.length > 0 ? benefits.join(', ') : 'None selected'],
+                ...benefits.map(benefit => [benefit, '□ Active', '□ Needs Renewal', '□ Under Review']),
+                [''],
+                ['Legal & Administrative Notes'],
+                ['Important Dates & Actions:', legalNotes],
+                [''],
+                ['Annual Legal Review Checklist'],
+                ['□ Child support modification review'],
+                ['□ Tax planning consultation'],
+                ['□ Will and guardianship updates'],
+                ['□ Government benefits eligibility review'],
+                ['□ Legal document organization'],
+                ['□ Emergency contact updates'],
+                [''],
+                ['Monthly Budget'],
+                ['Child Support:', `$${childSupport.toLocaleString()}`],
+                ['Legal Services (Monthly):', `$${((legalFees + taxPreparation + willUpdates) / 12).toLocaleString()}`],
+                ['Total Monthly:', `$${(childSupport + ((legalFees + taxPreparation + willUpdates) / 12)).toLocaleString()}`],
+                [''],
+                ['Important Contacts'],
+                ['Family Attorney:', ''],
+                ['Tax Preparer:', ''],
+                ['Child Support Office:', ''],
+                ['Benefits Office:', ''],
+                ['Emergency Guardian:', '']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(legalAdmin);
+            XLSX.utils.book_append_sheet(wb, ws, 'Legal & Administrative');
         }
 
         // Milestone functions
