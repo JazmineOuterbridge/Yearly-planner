@@ -182,32 +182,14 @@
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Child & Routine</h2>
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Milestones/Activities to Focus On</label>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Motor Skills" class="milestone-checkbox">
-                                    <span class="text-sm">Motor Skills</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Reading" class="milestone-checkbox">
-                                    <span class="text-sm">Reading</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Social Skills" class="milestone-checkbox">
-                                    <span class="text-sm">Social Skills</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Independence" class="milestone-checkbox">
-                                    <span class="text-sm">Independence</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Creativity" class="milestone-checkbox">
-                                    <span class="text-sm">Creativity</span>
-                                </label>
-                                <label class="flex items-center space-x-2">
-                                    <input type="checkbox" value="Physical Activity" class="milestone-checkbox">
-                                    <span class="text-sm">Physical Activity</span>
-                                </label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Age-Appropriate Milestones to Focus On</label>
+                            <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-blue-800" id="milestoneInfo">
+                                    Select your child's age in Step 1 to see age-appropriate milestones
+                                </p>
+                            </div>
+                            <div id="milestonesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Milestones will be dynamically populated based on child's age -->
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -298,6 +280,316 @@
         const totalSteps = 6;
         const formData = {};
 
+        // Comprehensive child development milestones by age
+        const milestonesByAge = {
+            0: {
+                title: "Infant (0-12 months)",
+                milestones: [
+                    "Lifts head when lying on tummy",
+                    "Follows objects with eyes",
+                    "Responds to familiar voices",
+                    "Rolls over (tummy to back)",
+                    "Sits without support",
+                    "Crawls or scoots",
+                    "Pulls to standing",
+                    "Says first words (mama, dada)",
+                    "Waves bye-bye",
+                    "Drinks from a cup",
+                    "Finger feeds self",
+                    "Sleeps through the night"
+                ]
+            },
+            1: {
+                title: "Toddler (12-24 months)",
+                milestones: [
+                    "Walks independently",
+                    "Says 10-20 words",
+                    "Follows simple instructions",
+                    "Points to body parts",
+                    "Uses spoon/fork",
+                    "Plays simple pretend games",
+                    "Shows affection",
+                    "Imitates others",
+                    "Builds tower of 2-3 blocks",
+                    "Scribbles with crayon",
+                    "Shows independence",
+                    "Has temper tantrums"
+                ]
+            },
+            2: {
+                title: "Toddler (2-3 years)",
+                milestones: [
+                    "Runs and jumps",
+                    "Speaks in 2-3 word sentences",
+                    "Follows 2-step instructions",
+                    "Uses toilet with help",
+                    "Dresses self partially",
+                    "Plays with other children",
+                    "Shows empathy",
+                    "Counts to 10",
+                    "Recognizes colors",
+                    "Builds tower of 6+ blocks",
+                    "Draws circles and lines",
+                    "Shows imagination in play"
+                ]
+            },
+            3: {
+                title: "Preschooler (3-4 years)",
+                milestones: [
+                    "Rides tricycle",
+                    "Speaks clearly in sentences",
+                    "Asks 'why' questions",
+                    "Uses toilet independently",
+                    "Dresses self completely",
+                    "Shares and takes turns",
+                    "Shows concern for others",
+                    "Counts to 20",
+                    "Recognizes letters",
+                    "Cuts with scissors",
+                    "Draws recognizable pictures",
+                    "Engages in cooperative play"
+                ]
+            },
+            4: {
+                title: "Preschooler (4-5 years)",
+                milestones: [
+                    "Hops on one foot",
+                    "Tells stories",
+                    "Follows 3-step instructions",
+                    "Washes hands independently",
+                    "Ties shoes (with practice)",
+                    "Plays organized games",
+                    "Shows leadership",
+                    "Counts to 50",
+                    "Recognizes some sight words",
+                    "Writes name",
+                    "Draws detailed pictures",
+                    "Understands rules and fairness"
+                ]
+            },
+            5: {
+                title: "Kindergarten (5-6 years)",
+                milestones: [
+                    "Skips and gallops",
+                    "Reads simple books",
+                    "Follows classroom rules",
+                    "Completes homework",
+                    "Packs own backpack",
+                    "Makes friends easily",
+                    "Resolves conflicts",
+                    "Counts to 100",
+                    "Reads sight words",
+                    "Writes simple sentences",
+                    "Draws complex scenes",
+                    "Shows responsibility"
+                ]
+            },
+            6: {
+                title: "Early Elementary (6-7 years)",
+                milestones: [
+                    "Rides bicycle",
+                    "Reads chapter books",
+                    "Completes assignments",
+                    "Manages time",
+                    "Organizes belongings",
+                    "Works in groups",
+                    "Shows empathy",
+                    "Does basic math",
+                    "Spells common words",
+                    "Writes paragraphs",
+                    "Creates art projects",
+                    "Follows routines"
+                ]
+            },
+            7: {
+                title: "Elementary (7-8 years)",
+                milestones: [
+                    "Plays team sports",
+                    "Reads for pleasure",
+                    "Takes responsibility",
+                    "Manages homework",
+                    "Keeps room tidy",
+                    "Builds friendships",
+                    "Shows leadership",
+                    "Solves word problems",
+                    "Writes stories",
+                    "Creates detailed art",
+                    "Follows complex rules",
+                    "Shows independence"
+                ]
+            },
+            8: {
+                title: "Elementary (8-9 years)",
+                milestones: [
+                    "Masters physical skills",
+                    "Reads complex books",
+                    "Sets personal goals",
+                    "Manages projects",
+                    "Organizes schedule",
+                    "Resolves peer conflicts",
+                    "Shows compassion",
+                    "Does multi-step math",
+                    "Writes essays",
+                    "Creates original art",
+                    "Understands consequences",
+                    "Shows self-discipline"
+                ]
+            },
+            9: {
+                title: "Upper Elementary (9-10 years)",
+                milestones: [
+                    "Excels in chosen sports",
+                    "Reads diverse genres",
+                    "Pursues interests",
+                    "Manages long-term projects",
+                    "Maintains organization",
+                    "Builds strong friendships",
+                    "Shows emotional maturity",
+                    "Solves complex problems",
+                    "Writes creatively",
+                    "Develops artistic style",
+                    "Makes ethical decisions",
+                    "Shows self-motivation"
+                ]
+            },
+            10: {
+                title: "Pre-Teen (10-11 years)",
+                milestones: [
+                    "Develops athletic skills",
+                    "Reads critically",
+                    "Pursues passions",
+                    "Manages multiple projects",
+                    "Stays organized",
+                    "Navigates social dynamics",
+                    "Shows emotional intelligence",
+                    "Applies math to real life",
+                    "Writes persuasively",
+                    "Creates original works",
+                    "Makes moral judgments",
+                    "Shows self-direction"
+                ]
+            },
+            11: {
+                title: "Pre-Teen (11-12 years)",
+                milestones: [
+                    "Masters physical activities",
+                    "Reads for understanding",
+                    "Develops expertise",
+                    "Plans long-term goals",
+                    "Maintains systems",
+                    "Builds peer relationships",
+                    "Shows emotional regulation",
+                    "Uses math in context",
+                    "Writes analytically",
+                    "Expresses creativity",
+                    "Makes responsible choices",
+                    "Shows initiative"
+                ]
+            },
+            12: {
+                title: "Teen (12-13 years)",
+                milestones: [
+                    "Develops athletic identity",
+                    "Reads for analysis",
+                    "Pursues specialized interests",
+                    "Sets academic goals",
+                    "Manages complex schedules",
+                    "Forms close friendships",
+                    "Shows emotional maturity",
+                    "Applies advanced math",
+                    "Writes research papers",
+                    "Develops artistic voice",
+                    "Makes ethical decisions",
+                    "Shows self-advocacy"
+                ]
+            },
+            13: {
+                title: "Teen (13-14 years)",
+                milestones: [
+                    "Commits to activities",
+                    "Reads for synthesis",
+                    "Develops career interests",
+                    "Plans for future",
+                    "Balances responsibilities",
+                    "Navigates peer pressure",
+                    "Shows emotional intelligence",
+                    "Uses math in careers",
+                    "Writes argumentatively",
+                    "Creates portfolio",
+                    "Makes moral choices",
+                    "Shows leadership"
+                ]
+            },
+            14: {
+                title: "Teen (14-15 years)",
+                milestones: [
+                    "Excels in chosen areas",
+                    "Reads for evaluation",
+                    "Explores career paths",
+                    "Sets life goals",
+                    "Manages priorities",
+                    "Builds romantic relationships",
+                    "Shows emotional stability",
+                    "Applies math to problems",
+                    "Writes professionally",
+                    "Develops expertise",
+                    "Makes ethical decisions",
+                    "Shows independence"
+                ]
+            },
+            15: {
+                title: "Teen (15-16 years)",
+                milestones: [
+                    "Achieves mastery",
+                    "Reads for insight",
+                    "Pursues career preparation",
+                    "Plans for college/career",
+                    "Balances work/study",
+                    "Forms deep relationships",
+                    "Shows emotional wisdom",
+                    "Uses advanced math",
+                    "Writes for publication",
+                    "Creates original work",
+                    "Makes life decisions",
+                    "Shows self-reliance"
+                ]
+            },
+            16: {
+                title: "Teen (16-17 years)",
+                milestones: [
+                    "Leads in activities",
+                    "Reads for wisdom",
+                    "Prepares for career",
+                    "Plans for independence",
+                    "Manages adult responsibilities",
+                    "Builds lasting relationships",
+                    "Shows emotional maturity",
+                    "Applies math professionally",
+                    "Writes for purpose",
+                    "Creates meaningful art",
+                    "Makes moral choices",
+                    "Shows self-determination"
+                ]
+            },
+            17: {
+                title: "Young Adult (17-18 years)",
+                milestones: [
+                    "Mentors others",
+                    "Reads for growth",
+                    "Pursues career goals",
+                    "Plans for adulthood",
+                    "Manages full independence",
+                    "Forms adult relationships",
+                    "Shows emotional intelligence",
+                    "Uses math in career",
+                    "Writes for impact",
+                    "Creates legacy work",
+                    "Makes ethical decisions",
+                    "Shows self-actualization"
+                ]
+            }
+        };
+
         // DOM elements
         const steps = document.querySelectorAll('.step');
         const progressBar = document.getElementById('progressBar');
@@ -312,6 +604,7 @@
             loadFromLocalStorage();
             updateStepDisplay();
             setupEventListeners();
+            updateMilestones();
         });
 
         // Event listeners
@@ -325,6 +618,9 @@
                 input.addEventListener('change', saveToLocalStorage);
                 input.addEventListener('input', saveToLocalStorage);
             });
+
+            // Update milestones when child age changes
+            document.getElementById('childAge').addEventListener('input', updateMilestones);
         }
 
         // Navigation functions
@@ -640,16 +936,27 @@
                 milestones.push(cb.value);
             });
             
+            const childAge = parseInt(data.childAge) || 0;
+            const ageData = milestonesByAge[childAge] || { title: 'Unknown Age', milestones: [] };
+            
             const routines = [
                 ['Child Routines & Milestones'],
+                [''],
+                ['Child Information'],
+                ['Age:', data.childAge],
+                ['Age Group:', ageData.title],
+                ['Birthday Month:', data.birthdayMonth],
                 [''],
                 ['Daily Routine'],
                 ['Wake-up Time:', data.wakeUpTime],
                 ['Bedtime:', data.bedtime],
                 ['Meal Times:', data.mealTimes],
                 [''],
-                ['Milestones to Focus On'],
+                ['Selected Milestones to Focus On'],
                 ...milestones.map(milestone => [milestone, '□ In Progress', '□ Completed']),
+                [''],
+                ['All Age-Appropriate Milestones'],
+                ...ageData.milestones.map(milestone => [milestone, '□ Not Started', '□ In Progress', '□ Completed']),
                 [''],
                 ['Weekly Schedule Template'],
                 ['Day', 'Morning', 'Afternoon', 'Evening'],
@@ -664,6 +971,48 @@
             
             const ws = XLSX.utils.aoa_to_sheet(routines);
             XLSX.utils.book_append_sheet(wb, ws, 'Routines & Child');
+        }
+
+        // Milestone functions
+        function updateMilestones() {
+            const childAge = parseInt(document.getElementById('childAge').value) || 0;
+            const milestoneInfo = document.getElementById('milestoneInfo');
+            const milestonesContainer = document.getElementById('milestonesContainer');
+            
+            if (childAge >= 0 && childAge <= 17) {
+                const ageData = milestonesByAge[childAge];
+                milestoneInfo.textContent = `Showing milestones for ${ageData.title}`;
+                
+                // Clear existing milestones
+                milestonesContainer.innerHTML = '';
+                
+                // Create milestone checkboxes
+                ageData.milestones.forEach((milestone, index) => {
+                    const milestoneDiv = document.createElement('div');
+                    milestoneDiv.className = 'flex items-start space-x-3 p-3 bg-gray-50 rounded-lg';
+                    
+                    milestoneDiv.innerHTML = `
+                        <input type="checkbox" 
+                               id="milestone_${index}" 
+                               value="${milestone}" 
+                               class="milestone-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="milestone_${index}" class="text-sm text-gray-700 leading-relaxed">
+                            ${milestone}
+                        </label>
+                    `;
+                    
+                    milestonesContainer.appendChild(milestoneDiv);
+                });
+                
+                // Add event listeners to new checkboxes
+                document.querySelectorAll('.milestone-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', saveToLocalStorage);
+                });
+                
+            } else {
+                milestoneInfo.textContent = 'Please enter a valid age (0-17) to see age-appropriate milestones';
+                milestonesContainer.innerHTML = '<p class="text-gray-500 text-center py-8">No milestones available. Please enter your child\'s age in Step 1.</p>';
+            }
         }
 
         // Toast notification
