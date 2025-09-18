@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Parent Yearly Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-green-50 min-h-screen font-sans">
+    <!-- Progress Bar -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between mb-2">
+                <h1 class="text-xl font-semibold text-gray-800">Single Parent Yearly Planner</h1>
+                <span class="text-sm text-gray-600" id="stepCounter">Step 1 of 6</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500" id="progressBar" style="width: 16.67%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast"></div>
+
+        <!-- Form Container -->
+        <div class="bg-white rounded-lg shadow-lg p-8 fade-in">
+            <form id="plannerForm" class="space-y-8">
+                
+                <!-- Step 1: Personal Basics -->
+                <div class="step" id="step1">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Personal Basics</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Child's Age</label>
+                            <input type="number" id="childAge" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" max="18" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Child's Birthday Month</label>
+                            <select id="birthdayMonth" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Select Month</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Monthly Income ($)</label>
+                            <input type="number" id="monthlyIncome" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fixed Monthly Expenses ($)</label>
+                            <input type="number" id="fixedExpenses" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Savings ($)</label>
+                            <input type="number" id="currentSavings" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Debt ($)</label>
+                            <input type="number" id="currentDebt" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Financial Goals -->
+                <div class="step hidden" id="step2">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Financial Goals</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Fund Target ($)</label>
+                            <input type="number" id="emergencyFund" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">School Fees Goal ($)</label>
+                            <input type="number" id="schoolFees" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">House Down Payment Target ($)</label>
+                            <input type="number" id="houseDownPayment" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Monthly Side Hustle Potential ($)</label>
+                            <input type="number" id="sideHustle" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Holiday Planning -->
+                <div class="step hidden" id="step3">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Holiday Planning</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Birthday Trip Month</label>
+                            <select id="tripMonth" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Select Month</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Trip Budget ($)</label>
+                            <input type="number" id="tripBudget" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.01" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Trip Preferences</label>
+                            <select id="tripPreferences" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <option value="">Select Preference</option>
+                                <option value="Beach">Beach</option>
+                                <option value="Park">Park</option>
+                                <option value="Theme Park">Theme Park</option>
+                                <option value="Museum">Museum</option>
+                                <option value="Zoo">Zoo</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Location Ideas</label>
+                            <input type="text" id="locationIdeas" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., Local beach, Disney World, etc.">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Personal Growth -->
+                <div class="step hidden" id="step4">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Personal Growth</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reading Goal (books per month)</label>
+                            <input type="number" id="readingGoal" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" step="0.1" value="1">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reading Themes/Genres</label>
+                            <input type="text" id="readingThemes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., Parenting, Self-help, Fiction">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Frequency (times per week)</label>
+                            <input type="number" id="exerciseFrequency" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" max="7" value="3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Types</label>
+                            <select id="exerciseTypes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="Cardio">Cardio</option>
+                                <option value="Strength Training">Strength Training</option>
+                                <option value="Yoga">Yoga</option>
+                                <option value="Mixed">Mixed</option>
+                                <option value="Walking">Walking</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Child & Routine -->
+                <div class="step hidden" id="step5">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Child & Routine</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Milestones/Activities to Focus On</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Motor Skills" class="milestone-checkbox">
+                                    <span class="text-sm">Motor Skills</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Reading" class="milestone-checkbox">
+                                    <span class="text-sm">Reading</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Social Skills" class="milestone-checkbox">
+                                    <span class="text-sm">Social Skills</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Independence" class="milestone-checkbox">
+                                    <span class="text-sm">Independence</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Creativity" class="milestone-checkbox">
+                                    <span class="text-sm">Creativity</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" value="Physical Activity" class="milestone-checkbox">
+                                    <span class="text-sm">Physical Activity</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Wake-up Time</label>
+                                <input type="time" id="wakeUpTime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="07:00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bedtime</label>
+                                <input type="time" id="bedtime" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="20:00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Meal Times (e.g., 8:00, 12:00, 18:00)</label>
+                                <input type="text" id="mealTimes" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="8:00, 12:00, 18:00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Review -->
+                <div class="step hidden" id="step6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Review Your Plan</h2>
+                    <div class="bg-gray-50 rounded-lg p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-3">Financial Summary</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Monthly Income:</span>
+                                        <span id="reviewIncome">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Monthly Expenses:</span>
+                                        <span id="reviewExpenses">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Monthly Savings Potential:</span>
+                                        <span id="reviewSavings">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Emergency Fund Target:</span>
+                                        <span id="reviewEmergency">$0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>School Fees Goal:</span>
+                                        <span id="reviewSchool">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800 mb-3">Goals Timeline</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>Months to Save Emergency Fund:</span>
+                                        <span id="reviewEmergencyMonths">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Months to Save School Fees:</span>
+                                        <span id="reviewSchoolMonths">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Books to Read This Year:</span>
+                                        <span id="reviewBooks">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Workouts This Year:</span>
+                                        <span id="reviewWorkouts">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between pt-6 border-t">
+                    <button type="button" id="prevBtn" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors hidden">Previous</button>
+                    <button type="button" id="nextBtn" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg hover:from-blue-600 hover:to-green-600 transition-all ml-auto">Next</button>
+                    <button type="button" id="generateBtn" class="px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg hover:from-green-600 hover:to-blue-600 transition-all hidden">Generate My Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        const totalSteps = 6;
+        const formData = {};
+
+        // DOM elements
+        const steps = document.querySelectorAll('.step');
+        const progressBar = document.getElementById('progressBar');
+        const stepCounter = document.getElementById('stepCounter');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            updateStepDisplay();
+            setupEventListeners();
+        });
+
+        // Event listeners
+        function setupEventListeners() {
+            nextBtn.addEventListener('click', nextStep);
+            prevBtn.addEventListener('click', prevStep);
+            generateBtn.addEventListener('click', generatePlan);
+            
+            // Auto-save on input change
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('change', saveToLocalStorage);
+                input.addEventListener('input', saveToLocalStorage);
+            });
+        }
+
+        // Navigation functions
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepDisplay();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+
+        function updateStepDisplay() {
+            // Hide all steps
+            steps.forEach(step => step.classList.add('hidden'));
+            
+            // Show current step
+            document.getElementById(`step${currentStep}`).classList.remove('hidden');
+            
+            // Update progress bar
+            const progress = (currentStep / totalSteps) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Update step counter
+            stepCounter.textContent = `Step ${currentStep} of ${totalSteps}`;
+            
+            // Update buttons
+            prevBtn.classList.toggle('hidden', currentStep === 1);
+            nextBtn.classList.toggle('hidden', currentStep === totalSteps);
+            generateBtn.classList.toggle('hidden', currentStep !== totalSteps);
+            
+            // Update review data if on last step
+            if (currentStep === totalSteps) {
+                updateReviewData();
+            }
+        }
+
+        // Validation
+        function validateCurrentStep() {
+            const currentStepElement = document.getElementById(`step${currentStep}`);
+            const requiredInputs = currentStepElement.querySelectorAll('[required]');
+            
+            for (let input of requiredInputs) {
+                if (!input.value.trim()) {
+                    showToast(`${input.previousElementSibling.textContent} is required`, 'error');
+                    input.focus();
+                    return false;
+                }
+                
+                if (input.type === 'number' && parseFloat(input.value) < 0) {
+                    showToast(`${input.previousElementSibling.textContent} must be positive`, 'error');
+                    input.focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Local storage functions
+        function saveToLocalStorage() {
+            const data = {};
+            document.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'checkbox') {
+                    data[input.id] = input.checked;
+                } else {
+                    data[input.id] = input.value;
+                }
+            });
+            localStorage.setItem('plannerData', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('plannerData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(data).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = data[key];
+                        } else {
+                            element.value = data[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        // Review data update
+        function updateReviewData() {
+            const income = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            const expenses = parseFloat(document.getElementById('fixedExpenses').value) || 0;
+            const emergency = parseFloat(document.getElementById('emergencyFund').value) || 0;
+            const school = parseFloat(document.getElementById('schoolFees').value) || 0;
+            const readingGoal = parseFloat(document.getElementById('readingGoal').value) || 0;
+            const exerciseFreq = parseFloat(document.getElementById('exerciseFrequency').value) || 0;
+            
+            const savings = income - expenses;
+            const emergencyMonths = emergency > 0 && savings > 0 ? Math.ceil(emergency / savings) : 0;
+            const schoolMonths = school > 0 && savings > 0 ? Math.ceil(school / savings) : 0;
+            const booksYear = readingGoal * 12;
+            const workoutsYear = exerciseFreq * 52;
+            
+            document.getElementById('reviewIncome').textContent = `$${income.toLocaleString()}`;
+            document.getElementById('reviewExpenses').textContent = `$${expenses.toLocaleString()}`;
+            document.getElementById('reviewSavings').textContent = `$${savings.toLocaleString()}`;
+            document.getElementById('reviewEmergency').textContent = `$${emergency.toLocaleString()}`;
+            document.getElementById('reviewSchool').textContent = `$${school.toLocaleString()}`;
+            document.getElementById('reviewEmergencyMonths').textContent = emergencyMonths;
+            document.getElementById('reviewSchoolMonths').textContent = schoolMonths;
+            document.getElementById('reviewBooks').textContent = booksYear;
+            document.getElementById('reviewWorkouts').textContent = workoutsYear;
+        }
+
+        // Excel generation
+        function generatePlan() {
+            if (!validateCurrentStep()) return;
+            
+            try {
+                // Collect all form data
+                const data = collectFormData();
+                
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Create sheets
+                createOverviewSheet(wb, data);
+                createBudgetSheet(wb, data);
+                createFinancialTrackerSheet(wb, data);
+                createHolidayPlanSheet(wb, data);
+                createReadingExerciseSheet(wb, data);
+                createRoutinesSheet(wb, data);
+                
+                // Generate and download file
+                const fileName = `MyFamilyPlan_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                // Clear localStorage
+                localStorage.removeItem('plannerData');
+                
+                showToast('Your family plan has been generated and downloaded!', 'success');
+                
+            } catch (error) {
+                showToast('Error generating plan. Please try again.', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        function collectFormData() {
+            const data = {};
+            document.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'checkbox') {
+                    data[input.id] = input.checked;
+                } else {
+                    data[input.id] = input.value;
+                }
+            });
+            return data;
+        }
+
+        function createOverviewSheet(wb, data) {
+            const overview = [
+                ['Single Parent Yearly Planner - Overview'],
+                [''],
+                ['Personal Information'],
+                ['Child Age:', data.childAge],
+                ['Birthday Month:', data.birthdayMonth],
+                ['Monthly Income:', `$${parseFloat(data.monthlyIncome || 0).toLocaleString()}`],
+                ['Fixed Expenses:', `$${parseFloat(data.fixedExpenses || 0).toLocaleString()}`],
+                ['Current Savings:', `$${parseFloat(data.currentSavings || 0).toLocaleString()}`],
+                ['Current Debt:', `$${parseFloat(data.currentDebt || 0).toLocaleString()}`],
+                [''],
+                ['Financial Goals'],
+                ['Emergency Fund Target:', `$${parseFloat(data.emergencyFund || 0).toLocaleString()}`],
+                ['School Fees Goal:', `$${parseFloat(data.schoolFees || 0).toLocaleString()}`],
+                ['House Down Payment:', `$${parseFloat(data.houseDownPayment || 0).toLocaleString()}`],
+                ['Monthly Side Hustle:', `$${parseFloat(data.sideHustle || 0).toLocaleString()}`],
+                [''],
+                ['Personal Growth Goals'],
+                ['Reading Goal (books/month):', data.readingGoal],
+                ['Exercise Frequency (times/week):', data.exerciseFrequency],
+                ['Exercise Type:', data.exerciseTypes]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(overview);
+            XLSX.utils.book_append_sheet(wb, ws, 'Overview');
+        }
+
+        function createBudgetSheet(wb, data) {
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const savings = income - expenses;
+            
+            const budget = [
+                ['Monthly Budget - 50/30/20 Rule'],
+                [''],
+                ['Category', 'Amount', 'Percentage', 'Notes'],
+                ['Needs (50%)', `$${Math.round(income * 0.5).toLocaleString()}`, '50%', 'Housing, food, utilities, childcare'],
+                ['Wants (30%)', `$${Math.round(income * 0.3).toLocaleString()}`, '30%', 'Entertainment, dining out, hobbies'],
+                ['Savings (20%)', `$${Math.round(income * 0.2).toLocaleString()}`, '20%', 'Emergency fund, goals, investments'],
+                [''],
+                ['Current Situation'],
+                ['Monthly Income', `$${income.toLocaleString()}`],
+                ['Fixed Expenses', `$${expenses.toLocaleString()}`],
+                ['Available for Goals', `$${savings.toLocaleString()}`],
+                [''],
+                ['Quarterly Breakdown'],
+                ['Q1', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q2', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q3', `$${Math.round(income * 3).toLocaleString()}`],
+                ['Q4', `$${Math.round(income * 3).toLocaleString()}`]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(budget);
+            XLSX.utils.book_append_sheet(wb, ws, 'Budget');
+        }
+
+        function createFinancialTrackerSheet(wb, data) {
+            const income = parseFloat(data.monthlyIncome || 0);
+            const expenses = parseFloat(data.fixedExpenses || 0);
+            const savings = income - expenses;
+            const emergency = parseFloat(data.emergencyFund || 0);
+            const school = parseFloat(data.schoolFees || 0);
+            const house = parseFloat(data.houseDownPayment || 0);
+            
+            const tracker = [
+                ['Financial Progress Tracker'],
+                [''],
+                ['Goal', 'Target Amount', 'Current Amount', 'Remaining', 'Monthly Target', 'Months to Goal'],
+                ['Emergency Fund', `$${emergency.toLocaleString()}`, `$${parseFloat(data.currentSavings || 0).toLocaleString()}`, `$${(emergency - parseFloat(data.currentSavings || 0)).toLocaleString()}`, `$${Math.max(0, Math.ceil((emergency - parseFloat(data.currentSavings || 0)) / 12)).toLocaleString()}`, emergency > 0 && savings > 0 ? Math.ceil((emergency - parseFloat(data.currentSavings || 0)) / savings) : 0],
+                ['School Fees', `$${school.toLocaleString()}`, '$0', `$${school.toLocaleString()}`, `$${Math.max(0, Math.ceil(school / 12)).toLocaleString()}`, school > 0 && savings > 0 ? Math.ceil(school / savings) : 0],
+                ['House Down Payment', `$${house.toLocaleString()}`, '$0', `$${house.toLocaleString()}`, `$${Math.max(0, Math.ceil(house / 12)).toLocaleString()}`, house > 0 && savings > 0 ? Math.ceil(house / savings) : 0],
+                [''],
+                ['Monthly Income:', `$${income.toLocaleString()}`],
+                ['Monthly Expenses:', `$${expenses.toLocaleString()}`],
+                ['Monthly Savings:', `$${savings.toLocaleString()}`]
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(tracker);
+            XLSX.utils.book_append_sheet(wb, ws, 'Financial Tracker');
+        }
+
+        function createHolidayPlanSheet(wb, data) {
+            const holiday = [
+                ['Birthday Trip Planning'],
+                [''],
+                ['Trip Details'],
+                ['Month:', data.tripMonth],
+                ['Budget:', `$${parseFloat(data.tripBudget || 0).toLocaleString()}`],
+                ['Preferences:', data.tripPreferences],
+                ['Location Ideas:', data.locationIdeas],
+                [''],
+                ['Budget Breakdown'],
+                ['Transportation', '30%', `$${Math.round(parseFloat(data.tripBudget || 0) * 0.3).toLocaleString()}`],
+                ['Accommodation', '40%', `$${Math.round(parseFloat(data.tripBudget || 0) * 0.4).toLocaleString()}`],
+                ['Activities', '20%', `$${Math.round(parseFloat(data.tripBudget || 0) * 0.2).toLocaleString()}`],
+                ['Food & Misc', '10%', `$${Math.round(parseFloat(data.tripBudget || 0) * 0.1).toLocaleString()}`],
+                [''],
+                ['Planning Checklist'],
+                ['□ Research destinations'],
+                ['□ Book transportation'],
+                ['□ Reserve accommodation'],
+                ['□ Plan activities'],
+                ['□ Pack essentials'],
+                ['□ Set budget alerts']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(holiday);
+            XLSX.utils.book_append_sheet(wb, ws, 'Holiday Plan');
+        }
+
+        function createReadingExerciseSheet(wb, data) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const readingGoal = parseFloat(data.readingGoal || 0);
+            const exerciseFreq = parseFloat(data.exerciseFrequency || 0);
+            
+            const readingExercise = [
+                ['Reading & Exercise Tracker'],
+                [''],
+                ['Monthly Goals'],
+                ['Books per month:', readingGoal],
+                ['Workouts per week:', exerciseFreq],
+                ['Total books this year:', readingGoal * 12],
+                ['Total workouts this year:', exerciseFreq * 52],
+                [''],
+                ['Monthly Calendar'],
+                ['Month', 'Books Read', 'Workouts Completed', 'Notes']
+            ];
+            
+            months.forEach(month => {
+                readingExercise.push([month, '', '', '']);
+            });
+            
+            readingExercise.push(['']);
+            readingExercise.push(['Reading Themes:', data.readingThemes]);
+            readingExercise.push(['Exercise Type:', data.exerciseTypes]);
+            
+            const ws = XLSX.utils.aoa_to_sheet(readingExercise);
+            XLSX.utils.book_append_sheet(wb, ws, 'Reading & Exercise');
+        }
+
+        function createRoutinesSheet(wb, data) {
+            const milestones = [];
+            document.querySelectorAll('.milestone-checkbox:checked').forEach(cb => {
+                milestones.push(cb.value);
+            });
+            
+            const routines = [
+                ['Child Routines & Milestones'],
+                [''],
+                ['Daily Routine'],
+                ['Wake-up Time:', data.wakeUpTime],
+                ['Bedtime:', data.bedtime],
+                ['Meal Times:', data.mealTimes],
+                [''],
+                ['Milestones to Focus On'],
+                ...milestones.map(milestone => [milestone, '□ In Progress', '□ Completed']),
+                [''],
+                ['Weekly Schedule Template'],
+                ['Day', 'Morning', 'Afternoon', 'Evening'],
+                ['Monday', '', '', ''],
+                ['Tuesday', '', '', ''],
+                ['Wednesday', '', '', ''],
+                ['Thursday', '', '', ''],
+                ['Friday', '', '', ''],
+                ['Saturday', '', '', ''],
+                ['Sunday', '', '', '']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(routines);
+            XLSX.utils.book_append_sheet(wb, ws, 'Routines & Child');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-3 rounded-lg text-white mb-2 fade-in ${
+                type === 'error' ? 'bg-red-500' : 
+                type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+            }`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
